@@ -37,3 +37,8 @@ func main() {
 	}
 }
 ```
+
+License
+-------
+
+MIT license; see LICENSE.txt.
