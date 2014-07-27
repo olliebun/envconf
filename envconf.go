@@ -13,7 +13,7 @@ projects don't have to worry about subsystems trying to find their config in
 the global process state.
 
 envconf allows the package user to define a type matching the config
-variables they want to pull out of the environment:
+variables they want to pull out of the environment.
 
 Usage
 
@@ -26,7 +26,7 @@ Define a struct literal or an instance of a struct type and call ReadConfigEnv:
 	envconf.ReadConfigEnv(&serverConfig)
 
 This will look up both PORT and BIND in the process environment and populate
-them in the config struct - provided that the value found for BIND can be
+them in the config struct - provided that the value found for Port can be
 parsed as an int.
 
 Types
