@@ -156,7 +156,7 @@ func ReadConfig(conf interface{}, getter func(string) string) error {
 
 	if len(missing) > 0 {
 		err = fmt.Errorf(
-			"Missing config fields: %s", strings.Join(missing, ","))
+			"Missing config fields: %s", strings.Join(missing, ", "))
 	}
 
 	return err
