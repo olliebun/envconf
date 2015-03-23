@@ -23,7 +23,8 @@ Define a struct literal or an instance of a struct type and call ReadConfigEnv:
 		Port int    `required:"true"`
 		Bind string `default:"0.0.0.0"`
 	}
-	envconf.ReadConfigEnv(&serverConfig)
+	err := envconf.ReadConfigEnv(&serverConfig)
+	// Deal with error here
 
 This will look up both PORT and BIND in the process environment and populate
 them in the config struct - provided that the value found for Port can be

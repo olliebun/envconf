@@ -17,7 +17,7 @@ rest of the work at runtime.
 
 An example:
 
-```golang
+```go
 // This program will look up PORT, BIND and BLACKLIST in the process
 // environment. If found, it will parse then and set the values on the
 // serverConfig object.
