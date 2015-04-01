@@ -1,7 +1,7 @@
 envconf
 =======
 
-See [godoc](http://godoc.org/github.com/DanielBryan/envconf) for package documentation.
+See [godoc](http://godoc.org/github.com/ceralena/envconf) for package documentation.
 
 `envconf` is a [Go](http://golang.org) package that makes it easy to build
 explicitly typed, structured configuration objects without complex parsing of
@@ -24,7 +24,7 @@ An example:
 package main
 
 import "log"
-import "github.com/DanielBryan/envconf"
+import "github.com/ceralena/envconf"
 
 func main() {
 	var serverConfig struct {
