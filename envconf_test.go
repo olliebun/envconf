@@ -1,6 +1,7 @@
 package envconf
 
 import (
+	"fmt"
 	"os"
 	"strings"
 	"testing"
@@ -196,4 +197,44 @@ func TestConfigEnv(t *testing.T) {
 		t.Errorf("ReadConfigEnv: got '%s', wanted 'foo'", v)
 		t.Fail()
 	}
+}
+
+func TestConfigEnvPrefix(t *testing.T) {
+	// Test of real environment
+	os.Setenv("FOO_ENVCONFTEST1", "foo")
+	defer os.Setenv("FOO_ENVCONFTEST1", "")
+	var conf struct {
+		ENVCONFTEST1 string
+	}
+	if err := ReadConfigEnvPrefix("FOO_", &conf); err != nil {
+		t.Errorf("Unexpected error %v", err)
+		t.FailNow()
+	}
+	if v := conf.ENVCONFTEST1; v != "foo" {
+		t.Errorf("ReadConfigEnvPrefix: got '%s', wanted 'foo'", v)
+		t.Fail()
+	}
+}
+
+func ExampleReadConfigEnv() {
+	os.Setenv("FOO", "hi")
+	os.Setenv("BAR", "yes")
+
+	defer os.Setenv("FOO", "")
+	defer os.Setenv("BAR", "")
+
+	var conf struct {
+		Foo string
+		Bar string
+	}
+
+	if err := ReadConfigEnv(&conf); err != nil {
+		panic(err)
+	}
+
+	fmt.Println(conf.Foo)
+	fmt.Println(conf.Bar)
+	// Output:
+	// hi
+	// yes
 }

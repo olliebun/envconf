@@ -38,6 +38,29 @@ func main() {
 }
 ```
 
+You can alternatively call `envconf.ReadConfigEnvPrefix()` if you want simple
+namespacing of the environment variables:
+
+```go
+// This program will look up MYSERVER_PORT, MYSERVER_BIND and
+// MYSERVER_BLACKLIST in the process environment.
+package main
+
+import "log"
+import "github.com/ceralena/envconf"
+
+func main() {
+	var serverConfig struct {
+		Port int    `required:"true"`
+		Bind string `default:"0.0.0.0"`
+		Blacklist []string
+	}
+	if err := envconf.ReadConfigEnvPrefix("MYSERVER_", &serverConfig); err != nil {
+		log.Fatal(err)
+	}
+}
+```
+
 License
 -------
 

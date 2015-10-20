@@ -30,6 +30,14 @@ This will look up both PORT and BIND in the process environment and populate
 them in the config struct - provided that the value found for Port can be
 parsed as an int.
 
+You can also set a prefix:
+
+	err := envconf.ReadConfigEnvPrefix("MYSERVER_", &serverConfig)
+
+This will behave in the same way as above, but will look for the environment
+variables MYSERVER_PORT and MYSERVER_BIND. This provides a simple way to
+namespace the environment variables.
+
 Types
 
 Three basic types are supported: int, bool and string. Slices of these types
@@ -167,4 +175,11 @@ func ReadConfig(conf interface{}, getter func(string) string) error {
 //	envconf.ReadConfig(conf, os.GetEnv)
 func ReadConfigEnv(conf interface{}) error {
 	return ReadConfig(conf, os.Getenv)
+}
+
+func ReadConfigEnvPrefix(prefix string, conf interface{}) error {
+	getter := func(k string) string {
+		return os.Getenv(fmt.Sprintf("%s%s", prefix, k))
+	}
+	return ReadConfig(conf, getter)
 }
