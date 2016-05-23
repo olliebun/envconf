@@ -3,6 +3,8 @@ envconf
 
 [![Build Status](https://travis-ci.org/ceralena/envconf.svg?branch=master)](https://travis-ci.org/ceralena/envconf)
 
+[![codecov](https://codecov.io/gh/ceralena/envconf/branch/master/graph/badge.svg)](https://codecov.io/gh/ceralena/envconf)
+
 See [godoc](http://godoc.org/github.com/ceralena/envconf) for package documentation.
 
 `envconf` is a [Go](http://golang.org) package that makes it easy to build
