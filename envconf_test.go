@@ -7,11 +7,6 @@ import (
 	"testing"
 )
 
-// a map wrapper for testing
-type testmap map[string]string
-
-func (t testmap) get(s string) string { return t[s] }
-
 func TestInvalidConfig(t *testing.T) {
 	tests := []struct {
 		v        interface{}
@@ -27,7 +22,7 @@ func TestInvalidConfig(t *testing.T) {
 			}, "Invalid kind for config field",
 		},
 	}
-	tm := testmap{"M": "hi"}
+	tm := mapgetter{"M": "hi"}
 
 	for _, test := range tests {
 		err := ReadConfig(test.v, tm.get)
@@ -53,32 +48,32 @@ func TestConfig(t *testing.T) {
 		ignored  bool
 	}
 	tests := []struct {
-		vals     testmap
+		vals     mapgetter
 		valid    bool
 		errmatch string
 	}{
-		{testmap{"FOO": "hehe", "BAr": "3", "on": "TRUE"}, true, ""},
-		{testmap{"FOO": "hehe", "BAr": "3", "on": "TRUE", "SOME": "yes,no"}, true, ""},
+		{mapgetter{"FOO": "hehe", "BAr": "3", "on": "TRUE"}, true, ""},
+		{mapgetter{"FOO": "hehe", "BAr": "3", "on": "TRUE", "SOME": "yes,no"}, true, ""},
 
-		{testmap{"FOO": "hehe", "BAR": "3"}, true, ""},
+		{mapgetter{"FOO": "hehe", "BAR": "3"}, true, ""},
 
 		// missing a required field
-		{testmap{"BAR": "3", "ON": "true"}, false, "Missing config fields: "},
+		{mapgetter{"BAR": "3", "ON": "true"}, false, "Missing config fields: "},
 
 		// invalid int
-		{testmap{"FOO": "hehe", "BAR": "sup", "ON": "true"}, false, "strconv.ParseInt: "},
+		{mapgetter{"FOO": "hehe", "BAR": "sup", "ON": "true"}, false, "strconv.ParseInt: "},
 
 		// invalid int list
-		{testmap{"FOO": "hehe", "BAr": "3", "on": "TRUE", "SOMEINT": "yes,no"}, false, "strconv.ParseInt: "},
+		{mapgetter{"FOO": "hehe", "BAr": "3", "on": "TRUE", "SOMEINT": "yes,no"}, false, "strconv.ParseInt: "},
 
 		// invalid bool list
-		{testmap{"FOO": "hehe", "BAr": "3", "on": "TRUE", "SOMEBOOL": "yes,no"}, false, "strconv.ParseBool: "},
+		{mapgetter{"FOO": "hehe", "BAr": "3", "on": "TRUE", "SOMEBOOL": "yes,no"}, false, "strconv.ParseBool: "},
 
 		// invalid bool
-		{testmap{"FOO": "hehe", "BAR": "3", "ON": "damn"}, false, "strconv.ParseBool: "},
+		{mapgetter{"FOO": "hehe", "BAR": "3", "ON": "damn"}, false, "strconv.ParseBool: "},
 
 		// ignore unexported
-		{testmap{"FOO": "hehe", "BAR": "3", "ON": "true", "ignored": "fdjhkl"}, true, ""},
+		{mapgetter{"FOO": "hehe", "BAR": "3", "ON": "true", "ignored": "fdjhkl"}, true, ""},
 	}
 
 	for _, test := range tests {
@@ -101,7 +96,7 @@ func TestConfigDefaults(t *testing.T) {
 	var myConf struct {
 		K string `default:"foo"`
 	}
-	err := ReadConfig(&myConf, make(testmap).get)
+	err := ReadConfig(&myConf, make(mapgetter).get)
 	if err != nil {
 		t.Errorf("Unexpected error %v", err)
 		t.Fail()
@@ -112,11 +107,28 @@ func TestConfigDefaults(t *testing.T) {
 	}
 }
 
+
+func TestConfigMap(t *testing.T) {
+	var myConf struct {
+		K string
+	}
+	m := map[string]string{"K": "ah"}
+	err := ReadConfigMap(&myConf, m)
+	if err != nil {
+		t.Errorf("Unexpected error %v", err)
+		t.Fail()
+	}
+	if myConf.K != "ah" {
+		t.Errorf("ReadConfig(): Expected default of \"ah\"; got %q'", myConf.K)
+		t.Fail()
+	}
+}
+
 func TestConfigBadSlice(t *testing.T) {
 	var myConf struct {
 		Hi []struct{} `required:"true"`
 	}
-	input := testmap{"HI": "a,b,c"}
+	input := mapgetter{"HI": "a,b,c"}
 	match := "[]struct {}"
 
 	if err := ReadConfig(&myConf, input.get); err == nil || !strings.Contains(err.Error(), match) {
@@ -132,7 +144,7 @@ func TestConfigSlice(t *testing.T) {
 		Bools   []bool
 		Strings []string
 	}
-	var input = testmap{
+	var input = mapgetter{
 		"INTS":    "1,2,3,4",
 		"BOOLS":   "true,false,true",
 		"STRINGS": "hello,yes,hi,lol,ok",

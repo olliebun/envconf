@@ -68,7 +68,7 @@ import (
 	"strings"
 )
 
-// Read from this getter func into a struct.
+// ReadConfig reads from this getter func into a struct.
 //
 // Must be passed a struct or a pointer to a struct.
 func ReadConfig(conf interface{}, getter func(string) string) error {
@@ -171,12 +171,24 @@ func ReadConfig(conf interface{}, getter func(string) string) error {
 	return err
 }
 
-// Read config from the process environment. A shortcut for:
+// ReadConfigEnv reads config from the process environment. A shortcut for:
 //	envconf.ReadConfig(conf, os.GetEnv)
 func ReadConfigEnv(conf interface{}) error {
 	return ReadConfig(conf, os.Getenv)
 }
 
+// a map wrapper for testing
+type mapgetter map[string]string
+
+func (t mapgetter) get(s string) string { return t[s] }
+
+// ReadConfigMap reads config from this map.
+func ReadConfigMap(conf interface{}, m map[string]string) error {
+	return ReadConfig(conf, mapgetter(m).get)
+}
+
+// ReadConfigenvPrefix reads config from the environment with a set prefix on
+// every environment variable.
 func ReadConfigEnvPrefix(prefix string, conf interface{}) error {
 	getter := func(k string) string {
 		return os.Getenv(fmt.Sprintf("%s%s", prefix, k))
